@@ -20,7 +20,7 @@
 
 <script>
 import Slider from 'base/slider/slider'
-import {getRecommend} from 'api/recommend'
+import {getRecommend, getDistList} from 'api/recommend'
 import {ERR_OK} from 'api/config'
 export default {
   data() {
@@ -36,6 +36,13 @@ export default {
       getRecommend().then((res) => {
         if (res.code === ERR_OK) {
           this.recommends = res.data.slider
+        }
+      })
+    },
+    _getDistList() {
+      getDistList().then((res) => {
+        if (res.code === ERR_OK) {
+          console.log(res.data.list)
         }
       })
     }
