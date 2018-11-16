@@ -30,6 +30,7 @@ export default {
   },
   created() {
     this._getRecommned()
+    this._getDistList()
   },
   methods: {
     _getRecommned() {
