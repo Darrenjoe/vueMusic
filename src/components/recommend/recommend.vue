@@ -26,6 +26,9 @@
           </ul>
         </div>
       </div>
+      <div class="loading-container" v-show="!distList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -34,6 +37,7 @@
 import Slider from 'base/slider/slider'
 import {getRecommend, getDistList} from 'api/recommend'
 import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
 import {ERR_OK} from 'api/config'
 export default {
   data() {
@@ -70,7 +74,8 @@ export default {
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>
