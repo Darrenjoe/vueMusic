@@ -73,7 +73,7 @@ export default {
       if (newY < this.minTranslateY) {
         zIndex = 10
         this.$refs.bgImgae.style.paddingTop = 0
-        this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}`
+        this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
       } else {
         this.$refs.bgImgae.style.paddingTop = '70%'
         this.$refs.bgImage.style.height = 0
