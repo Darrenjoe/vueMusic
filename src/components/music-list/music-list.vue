@@ -102,7 +102,7 @@ export default {
         this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
         this.$refs.playBtn.style.display = 'none'
       } else {
-        this.$refs.bgImgae.style.paddingTop = '70%'
+        this.$refs.bgImage.style.paddingTop = '70%'
         this.$refs.bgImage.style.height = 0
         this.$refs.playBtn.style.display = ''
       }
