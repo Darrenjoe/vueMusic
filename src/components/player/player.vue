@@ -1,5 +1,5 @@
 <template>
-  <div class="player" v-show="playlist.length>0" title="asd">
+  <div class="player" v-show="playlist.length>0">
     <transition name="normal"
                 @enter="enter"
                 @after-enter="afterEnter"
