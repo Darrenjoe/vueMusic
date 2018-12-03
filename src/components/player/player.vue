@@ -26,6 +26,11 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper"></div>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
+          </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -66,6 +71,7 @@
     <audio ref="audio"
            @play="ready"
            @error="error"
+           @timeupdate="updateTime"
            src="http://182.140.219.13/amobile.music.tc.qq.com/C4000024vbNZ4bQz74.m4a?guid=4880503750&vkey=7A3AD0DE7872AFC651538F5DDCF9141028D019D60C9E0010D6149D63F53CCD6801FFA40D51076BC38D795FF3D18C6460EFD0BE97661E9AB3&uin=5834&fromtag=66"></audio>
   </div>
 </template>
@@ -80,7 +86,8 @@ const transform = prefixStyle('transform')
 export default {
   data() {
     return {
-      songReady: false
+      songReady: false,
+      currentTime: 0
     }
   },
   computed: {
@@ -105,6 +112,15 @@ export default {
     ])
   },
   methods: {
+    updateTime(e) {
+      this.currentTime = e.target.currentTime
+    },
+    format(interval) {
+      interval = interval | 0
+      const minute = interval / 60 | 0
+      const second = this._pad(interval % 60)
+      return `${minute}:${second}`
+    },
     error() {
       this.songReady = true
     },
@@ -186,6 +202,14 @@ export default {
     },
     togglePlaying() {
       this.setPlayingState(!this.playing)
+    },
+    _pad(num, n = 2) {
+      let len = num.toString().length
+      while (len < n) {
+        num = '0' + num
+        len++
+      }
+      return num
     },
     _getPosAndScale() {
       const targetWidth = 40
