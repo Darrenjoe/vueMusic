@@ -30,14 +30,14 @@
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
-              <i class="icon-prev"></i>
+            <div class="icon i-left" :class="disableCls">
+              <i @click="prev" class="icon-prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disableCls">
               <i @click="togglePlaying" :class="playIcon"></i>
             </div>
-            <div class="icon i-right">
-              <i class="icon-next"></i>
+            <div class="icon i-right" :class="disableCls">
+              <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -63,7 +63,10 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" src="http://117.34.59.30/amobile.music.tc.qq.com/C400001Qu4I30eVFYb.m4a?guid=4880503750&vkey=D776DC2504AC6140A76388E35009B2BAC6A47DE97CDA25117447DCA496E46C09AF77AB2EAB43DA85E9A6120CBA5C2D621DA515D5A3202116&uin=0&fromtag=38"></audio>
+    <audio ref="audio"
+           @play="ready"
+           @error="error"
+           src="http://182.140.219.13/amobile.music.tc.qq.com/C4000024vbNZ4bQz74.m4a?guid=4880503750&vkey=7A3AD0DE7872AFC651538F5DDCF9141028D019D60C9E0010D6149D63F53CCD6801FFA40D51076BC38D795FF3D18C6460EFD0BE97661E9AB3&uin=5834&fromtag=66"></audio>
   </div>
 </template>
 
@@ -75,6 +78,11 @@ import {prefixStyle} from 'common/js/dom'
 const transform = prefixStyle('transform')
 
 export default {
+  data() {
+    return {
+      songReady: false
+    }
+  },
   computed: {
     cdCls() {
       return this.playing ? 'play' : 'play pause'
@@ -85,14 +93,52 @@ export default {
     miniIcon() {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
     },
+    disableCls() {
+      return this.songReady ? '' : 'disable'
+    },
     ...mapGetters([
       'currentSong',
       'fullScreen',
       'playlist',
-      'playing'
+      'playing',
+      'currentIndex'
     ])
   },
   methods: {
+    error() {
+      this.songReady = true
+    },
+    ready() {
+      this.songReady = true
+    },
+    prev() {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playlist.length - 1
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
+    next() {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex + 1
+      if (index === this.playlist.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
     back() {
       this.setFullScreen(false)
     },
@@ -158,7 +204,8 @@ export default {
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLAYING_STATE'
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     })
   },
   watch: {
