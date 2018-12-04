@@ -76,11 +76,12 @@
            @play="ready"
            @error="error"
            @timeupdate="updateTime"
-           :src="currentSong.url"></audio>
+           :src="currentSong.url"
+           @ended="end"></audio>
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
 import {mapGetters, mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
@@ -194,6 +195,17 @@ export default {
         this.togglePlaying()
       }
       this.songReady = false
+    },
+    end() {
+      if (this.mode === playMode.loop) {
+        this.loop()
+      } else {
+        this.next()
+      }
+    },
+    loop() {
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
     },
     back() {
       this.setFullScreen(false)
