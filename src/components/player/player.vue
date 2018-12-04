@@ -76,7 +76,7 @@
            @play="ready"
            @error="error"
            @timeupdate="updateTime"
-           src="http://182.140.219.13/amobile.music.tc.qq.com/C4000024vbNZ4bQz74.m4a?guid=4880503750&vkey=7A3AD0DE7872AFC651538F5DDCF9141028D019D60C9E0010D6149D63F53CCD6801FFA40D51076BC38D795FF3D18C6460EFD0BE97661E9AB3&uin=5834&fromtag=66"></audio>
+           :src="currentSong.url"></audio>
   </div>
 </template>
 
@@ -87,6 +87,7 @@ import {prefixStyle} from 'common/js/dom'
 import ProgressBar from 'base/progress-bar/progress-bar'
 import ProgressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config'
+import {shuffle} from 'common/js/util'
 
 const transform = prefixStyle('transform')
 
@@ -136,6 +137,20 @@ export default {
     changeMode() {
       const mode = (this.mode + 1) % 3
       this.setPlayMode(mode)
+      let list = null
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList)
+      } else {
+        list = this.sequenceList
+      }
+      this.resetCurrentIndex(list)
+      this.setPlayList(list)
+    },
+    resetCurrentIndex(list) {
+      let index = list.findIndex((item) => {
+        return item.id === this.currentSong.id
+      })
+      this.setCurrentIndex(index)
     },
     updateTime(e) {
       this.currentTime = e.target.currentTime
@@ -255,11 +270,15 @@ export default {
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
       setCurrentIndex: 'SET_CURRENT_INDEX',
-      setPlayMode: 'SET_PLAY_MODE'
+      setPlayMode: 'SET_PLAY_MODE',
+      setPlayList: 'SET_PLAY_LIST'
     })
   },
   watch: {
-    currentSong() {
+    currentSong(newSong, oldSong) {
+      if (newSong.id === oldSong.id) {
+        return
+      }
       this.$nextTick(() => {
         this.$refs.audio.play()
       })
