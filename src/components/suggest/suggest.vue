@@ -2,7 +2,9 @@
   <scroll class="suggest"
           :data="result"
           :pullup="pullup"
+          :beforeScroll="beforeScroll"
           @scrollToEnd="searchMore"
+          @beforeScroll="listScroll"
           ref="suggest">
     <ul class="suggest-list">
       <li @click="selectItem(item)" class="suggest-item" v-for="(item, index) in result" :key="index">
@@ -15,6 +17,9 @@
       </li>
       <loading v-show="hasMore"></loading>
     </ul>
+    <div class="no-result-wrapper" v-show="!hasMore && !result.length">
+      <no-result title="抱歉,暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 
@@ -25,7 +30,8 @@ import {createSong} from 'common/js/song'
 import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import Singer from 'common/js/singer'
-import {mapMutations} from 'vuex'
+import {mapMutations, mapActions} from 'vuex'
+import NoResult from 'base/no-result/no-result'
 
 const TYPE_SINGER = 'singer'
 const perpage = 20
@@ -46,7 +52,8 @@ export default {
       page: 1,
       result: [],
       pullup: true,
-      hasMore: true
+      hasMore: true,
+      beforeScroll: false
     }
   },
   methods: {
@@ -61,7 +68,7 @@ export default {
         })
         this.setSinger(singer)
       } else {
-        console.log('123')
+        this.insertSong(item)
       }
     },
     searchMore() {
@@ -101,6 +108,9 @@ export default {
         }
       })
     },
+    listScroll() {
+      this.$emit('listScroll')
+    },
     _checkMore(data) {
       const song = data.song
       if (!song.list.length || (song.curnum + song.curpage * perpage) > song.totalnum) {
@@ -128,7 +138,10 @@ export default {
     },
     ...mapMutations({
       setSinger: 'SET_SINGER'
-    })
+    }),
+    ...mapActions([
+      'insertSong'
+    ])
   },
   watch: {
     query() {
@@ -137,7 +150,8 @@ export default {
   },
   components: {
     Scroll,
-    Loading
+    Loading,
+    NoResult
   }
 }
 </script>
