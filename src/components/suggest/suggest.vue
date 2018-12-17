@@ -70,6 +70,7 @@ export default {
       } else {
         this.insertSong(item)
       }
+      this.$emit('select')
     },
     searchMore() {
       if (!this.hasMore) {
