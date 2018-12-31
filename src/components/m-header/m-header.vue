@@ -1,7 +1,7 @@
 <template>
   <div class="m-header">
     <div class="icon"></div>
-    <div class="text">Net Music</div>
+    <div class="text">Hello 2019</div>
   </div>
 </template>
 
