@@ -14,13 +14,14 @@
             <li class="item"
                 v-for="(item, index) in sequenceList"
                 :key="index"
-                @click="selectItem(item, index)">
+                @click="selectItem(item, index)"
+                ref="listItem">
               <i class="current" :class="getCurrentIcon(item)"></i>
               <span class="text">{{item.name}}</span>
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
@@ -41,7 +42,7 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {playMode} from 'common/js/config'
 import Scroll from 'base/scroll/scroll'
 
@@ -55,7 +56,8 @@ export default {
     ...mapGetters([
       'sequenceList',
       'currentSong',
-      'playlist'
+      'playlist',
+      'mode'
     ])
   },
   methods: {
@@ -63,6 +65,7 @@ export default {
       this.showFlag = true
       setTimeout(() => {
         this.$refs.listContent.refresh()
+        this.scrolToCurrent(this.currentSong)
       }, 20)
     },
     hide() {
@@ -81,10 +84,35 @@ export default {
         })
       }
       this.setCurrentIndex(index)
+      this.setPlayingState(true)
+    },
+    scrolToCurrent(current) {
+      const index = this.sequenceList.findIndex((song) => {
+        return current.id === song.id
+      })
+      this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
+    },
+    deleteOne(item) {
+      this.deleteSong(item)
+      if (!this.playlist.length) {
+        this.hide()
+      }
     },
     ...mapMutations({
-      setCurrentIndex: 'SET_CURRENT_INDEX'
-    })
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayingState: 'SET_PLAYING_STATE'
+    }),
+    ...mapActions([
+      'deleteSong'
+    ])
+  },
+  watch: {
+    currentSong(newSong, oldSong) {
+      if (!this.showFlag || newSong.id === oldSong.id) {
+        return
+      }
+      this.scrolToCurrent(newSong)
+    }
   },
   components: {
     Scroll
