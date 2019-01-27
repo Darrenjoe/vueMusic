@@ -1,6 +1,6 @@
 <template>
   <transition name="slide">
-    <div class="add-song">
+    <div class="add-song" v-show="showFlag">
       <div class="header">
         <h1 class="title">添加歌曲到列表</h1>
         <div class="close">
@@ -16,6 +16,21 @@
 </template>
 
 <script type="text/ecmascript-6">
+export default {
+  data() {
+    return {
+      showFlag: false
+    }
+  },
+  methods: {
+    show() {
+      this.showFlag = true
+    },
+    hide() {
+      this.showFlag = false
+    }
+  }
+}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
